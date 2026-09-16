@@ -26,6 +26,7 @@
 
   let view = "japan";
   let selectedId = null;
+  let todayId = null;
   let lastWidth = 0;
 
   const el = (name, attrs) => {
@@ -152,7 +153,7 @@
       const hitRadius = Math.max(15, Math.min(22, nearest - 15));
 
       const group = el("g", {
-        class: `pinbadge kind-${nd.kind}`,
+        class: `pinbadge kind-${nd.kind}${nd.id === todayId ? " is-today" : ""}`,
         id: `pin-${nd.id}`,
         tabindex: "0",
         role: "button",
@@ -161,6 +162,8 @@
       /* An invisible target past the 15px badge, so the pin clears the 44px
          minimum for touch — and the focus ring has something to sit on. */
       group.append(el("circle", { class: "hit", cx: bx, cy: by, r: hitRadius }));
+      /* Today's stop keeps a ring whether or not it is the selected one. */
+      if (nd.id === todayId) group.append(el("circle", { class: "today-ring", cx: bx, cy: by, r: 20 }));
       group.append(el("circle", { class: "badge", cx: bx, cy: by, r: 15 }));
 
       const number = el("text", {
@@ -177,7 +180,8 @@
       group.append(label);
       labels.push(label);
 
-      const open = () => window.Timeline.openStage(nd.id, true);
+      const open = () =>
+        window.Timeline.openStage(nd.id, { exclusive: true, scroll: true, focus: true });
       group.addEventListener("click", open);
       group.addEventListener("keydown", e => {
         if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
@@ -216,6 +220,14 @@
     applySelection();
   }
 
+  /* today.js decides which stage the current date falls in, and hands it here
+     so the badge can carry a ring. Null outside the trip's dates. */
+  function setToday(id) {
+    if (todayId === id) return;
+    todayId = id;
+    render();
+  }
+
   function setView(next) {
     if (view === next) return;
     view = next;
@@ -241,6 +253,6 @@
     }, 160);
   });
 
-  window.RouteMap = { select, render };
+  window.RouteMap = { select, setToday, render };
   render();
 })();

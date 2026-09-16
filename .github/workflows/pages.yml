@@ -1,0 +1,51 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# One deploy at a time, and let a newer push finish rather than queue behind an
+# older one — but never cancel a deploy that is already uploading.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # The worker precaches an explicit file list keyed by a hash of their
+      # contents. Regenerating here means what ships is always in step, even if
+      # the committed sw.js was not refreshed after an edit.
+      - name: Regenerate the service worker
+        run: node tools/build-sw.mjs
+
+      - name: Report service-worker drift
+        run: git --no-pager diff --stat -- site/sw.js || true
+
+      # Pages would otherwise run the tree through Jekyll, which drops files and
+      # folders whose names begin with an underscore.
+      - name: Disable Jekyll
+        run: touch site/.nojekyll
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4

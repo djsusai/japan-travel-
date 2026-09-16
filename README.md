@@ -1,25 +1,61 @@
-# CODING AGENTS: READ THIS FIRST
+# מסלול יפן · Japan trip app
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+An offline-first web app for a 26.9–15.10.2026 trip to Japan: an interactive
+route map, a day-by-day timeline with the hotels, flights, car rental and
+driving times, and a "today" card that knows where the trip is on the current
+date. Hebrew, right-to-left, with place names in English.
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+Installs to a phone's home screen and works with no network at all — on a
+plane, or with roaming off in a foreign country, which is the point.
 
-## What you should do — IMPORTANT
+```
+site/     the app — plain static files, no build step to serve
+tools/    generators: vendored libraries, icons, service worker
+project/  the original Claude Design prototype this was built from
+chats/    the conversation that produced the design
+```
 
-**Read the chat transcripts first.** There are 1 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
+## Running it locally
 
-**Read `project/route-map.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+```
+python3 -m http.server -d site 8000     # → http://localhost:8000
+```
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+Opening `site/index.html` straight from the filesystem also works — every asset
+is local — but installing to a home screen needs a real origin, so use the
+server (or the deployed site) for that.
 
-## About the design files
+Append `?date=2026-10-04` to any URL to see the app as it will look on that day
+of the trip.
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+## Deploying
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+Pushing to `main` publishes to GitHub Pages via
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml). It needs one
+setting, once:
 
-## Bundle contents
+> **Settings → Pages → Build and deployment → Source: GitHub Actions**
 
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `מפת מסלול יפן` project files (HTML prototypes, assets, components)
+The workflow regenerates the service worker from the current contents of
+`site/`, so a deploy never ships a stale offline cache.
+
+## Editing the trip
+
+Everything about the trip — dates, hotels, addresses, phone numbers, distances,
+driving times, map coordinates — lives in
+[`site/js/itinerary.js`](site/js/itinerary.js). The map, the timeline and the
+"today" card are all generated from that one array, so a change there shows up
+in all three. Nothing else needs touching.
+
+After editing anything under `site/`, regenerate the offline cache:
+
+```
+node tools/build-sw.mjs
+```
+
+(The deploy workflow does this too, so forgetting it only affects a local copy.)
+
+## More
+
+[`site/README.md`](site/README.md) covers the layout, how the map is drawn, how
+"today" is worked out, and where this deliberately differs from the prototype.

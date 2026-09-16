@@ -37,37 +37,41 @@
     row.querySelector(".tl-head").setAttribute("aria-expanded", String(open));
   }
 
-  /* fromMap: a badge was activated, so collapse everything else and scroll the
-     stage into view. From the list itself it is a plain toggle. */
-  function openStage(id, fromMap) {
+  /* opts.toggle  a second press on the same row closes it (the list's own rows)
+     opts.exclusive  collapse every other row first (arriving from elsewhere)
+     opts.scroll / opts.focus  bring the row into view and move the caret to it */
+  function openStage(id, opts = {}) {
     const row = document.getElementById(id);
     if (!row) return;
-    const open = fromMap ? true : !row.classList.contains("active");
+    const open = opts.toggle ? !row.classList.contains("active") : true;
 
-    if (fromMap) {
-      list.querySelectorAll(".tl-row.active").forEach(other => setOpen(other, false));
+    if (opts.exclusive) {
+      list.querySelectorAll(".tl-row.active").forEach(other => {
+        if (other !== row) setOpen(other, false);
+      });
     }
     setOpen(row, open);
-    window.RouteMap.select(id);
+    window.RouteMap.select(open ? id : null);
 
-    if (fromMap) {
+    if (opts.scroll) {
       window.scrollTo({
         top: row.getBoundingClientRect().top + window.scrollY - 24,
         behavior: reduceMotion.matches ? "auto" : "smooth",
       });
-      row.querySelector(".tl-head").focus({ preventScroll: true });
     }
+    if (opts.focus) row.querySelector(".tl-head").focus({ preventScroll: true });
   }
 
   list.addEventListener("click", e => {
     const head = e.target.closest(".tl-head");
-    if (head) openStage(head.dataset.id, false);
+    if (head) openStage(head.dataset.id, { toggle: true });
   });
 
   toggle.addEventListener("click", () => {
     const openAll = list.querySelectorAll(".tl-row.active").length < stages.length;
     list.querySelectorAll(".tl-row").forEach(row => setOpen(row, openAll));
-    toggle.textContent = openAll ? "סגור את כל הפרטים" : "פתח את כל הפרטים";
+    toggle.querySelector(".label-long").textContent = openAll ? "סגור את כל הפרטים" : "פתח את כל הפרטים";
+    toggle.querySelector(".label-short").textContent = openAll ? "סגור הכל" : "פתח הכל";
     toggle.setAttribute("aria-expanded", String(openAll));
   });
 

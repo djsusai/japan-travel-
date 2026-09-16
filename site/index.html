@@ -2,11 +2,18 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>מפת מסלול · יפן 26.9–15.10.2026</title>
-<meta name="description" content="מפת מסלול אינטראקטיבית לטיול ביפן, 26 בספטמבר עד 15 באוקטובר 2026 — טיסות, נסיעות, מלונות ופרטי השכרת הרכב.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מסלול יפן · 26.9–15.10.2026</title>
+<meta name="description" content="מפת מסלול אינטראקטיבית לטיול ביפן, 26 בספטמבר עד 15 באוקטובר 2026 — טיסות, נסיעות, מלונות ופרטי השכרת הרכב. עובדת בלי רשת.">
 <meta name="color-scheme" content="light">
+<meta name="theme-color" content="#f5ead8">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<!-- iOS reads neither the manifest's icons nor its display mode. -->
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="מסלול יפן">
 <link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/app.css">
@@ -18,14 +25,21 @@
       <h1>מסלול יפן · 17 יום</h1>
       <div class="sub">26 בספטמבר – 15 באוקטובר 2026 · תל אביב → אבו דאבי → אוסקה → קיוטו → פוג׳י → האקונה → טוקיו → תל אביב</div>
     </div>
+    <!-- The long labels are the design's; the short ones keep the row from
+         wrapping three deep on a phone. Only one of each pair is ever rendered. -->
     <div class="controls">
-      <div class="controls" role="group" aria-label="תצוגת המפה">
-        <button type="button" class="btn btn-secondary" id="viewJapan" aria-pressed="true">יפן</button>
-        <button type="button" class="btn btn-ghost" id="viewWorld" aria-pressed="false">כל המסלול כולל טיסות</button>
-      </div>
-      <button type="button" class="btn btn-ghost" id="toggleAll" aria-controls="timeline" aria-expanded="false">פתח את כל הפרטים</button>
+      <button type="button" class="btn btn-secondary" id="todayJump" hidden>היום</button>
+      <button type="button" class="btn btn-secondary" id="viewJapan" aria-pressed="true">יפן</button>
+      <button type="button" class="btn btn-ghost" id="viewWorld" aria-pressed="false">
+        <span class="label-long">כל המסלול כולל טיסות</span><span class="label-short">כל המסלול</span>
+      </button>
+      <button type="button" class="btn btn-ghost" id="toggleAll" aria-controls="timeline" aria-expanded="false">
+        <span class="label-long">פתח את כל הפרטים</span><span class="label-short">פתח הכל</span>
+      </button>
     </div>
   </header>
+
+  <div id="today"></div>
 
   <div id="mapbox"></div>
   <p id="mapStatus" class="sr-only" role="status" aria-live="polite">תצוגת יפן</p>
@@ -40,6 +54,11 @@
   <div class="tl" id="timeline"></div>
 </main>
 
+<div class="update" id="update" hidden>
+  <span>יש גרסה חדשה של המסלול</span>
+  <button type="button" class="btn btn-primary" id="updateNow">רענן</button>
+</div>
+
 <!-- d3-geo (with its d3-array dependency) supplies the Mercator projection and
      the path generator; countries.js is the pre-converted Natural Earth
      geometry. All four are local — see tools/vendor-assets.mjs. -->
@@ -49,5 +68,7 @@
 <script src="js/itinerary.js"></script>
 <script src="js/timeline.js"></script>
 <script src="js/map.js"></script>
+<script src="js/today.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>

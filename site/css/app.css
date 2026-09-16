@@ -21,6 +21,36 @@ header.top {
 header.top h1 { font-size: clamp(30px, 4.6vw, 46px); margin: 0; letter-spacing: 0; }
 .sub { font-size: 15px; color: var(--color-neutral-700); font-weight: 500; }
 .controls { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.label-short { display: none; }
+/* The system's .btn is display:inline-flex, which outranks the UA rule for the
+   hidden attribute — without this the "היום" button shows outside the trip. */
+.btn[hidden] { display: none; }
+
+/* — today —
+   The first thing the app shows: where the trip is on the device's date. It is
+   a button whenever there is a stage to jump to, a plain panel otherwise. */
+.today-card {
+  display: grid; gap: var(--space-2); width: 100%;
+  margin-bottom: var(--space-3);
+  padding: var(--space-4); border: 0; border-radius: var(--radius-lg);
+  background: var(--color-surface); box-shadow: var(--shadow-sm);
+  font: inherit; color: var(--color-text); text-align: right;
+}
+.today-card.is-link { cursor: pointer; }
+.today-card.is-link:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.today-card.is-link:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.today-head { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.today-date { font-size: 13px; font-weight: 500; color: var(--color-neutral-700); }
+.today-title { font-family: "Caprasimo", "Heebo", sans-serif; font-size: 25px; line-height: 1.15; }
+.today-title small {
+  font-family: "Heebo", sans-serif; font-weight: 500; font-size: 13px;
+  color: var(--color-neutral-700); margin-inline-start: 8px;
+}
+.today-lines { display: grid; gap: 2px; font-size: 14px; color: var(--color-neutral-800); }
+
+/* The stage the date falls in keeps its ring on the map whether or not it is
+   also the selected one, so "today" and "what I just tapped" stay distinct. */
+.today-ring { fill: none; stroke: var(--color-text); stroke-width: 1.5; stroke-opacity: 0.55; }
 
 /* — map — */
 #mapbox {
@@ -131,6 +161,21 @@ header.top h1 { font-size: clamp(30px, 4.6vw, 46px); margin: 0; letter-spacing: 
 
 .en { direction: ltr; unicode-bidi: isolate; display: inline-block; }
 
+/* — update prompt —
+   Only ever shown when a newer version has already finished downloading, so
+   pressing it is instant and works offline. */
+.update {
+  position: fixed; inset-inline: var(--space-4);
+  bottom: calc(var(--space-4) + env(safe-area-inset-bottom));
+  z-index: 10; margin: 0 auto; width: fit-content; max-width: calc(100% - var(--space-8));
+  display: flex; align-items: center; gap: var(--space-3);
+  padding-block: var(--space-2); padding-inline: var(--space-4) var(--space-2);
+  border-radius: 999px;
+  background: var(--color-neutral-900); color: var(--color-neutral-100);
+  box-shadow: var(--shadow-lg); font-size: 14px; font-weight: 500;
+}
+.update[hidden] { display: none; }
+
 /* — contrast —
    Organic paints ghost buttons and outlined tags in --color-accent, which on
    the cream ground and the sand surface comes to roughly 2.6–2.9:1. That clears
@@ -156,7 +201,8 @@ header.top h1 { font-size: clamp(30px, 4.6vw, 46px); margin: 0; letter-spacing: 
 }
 @media (max-width: 560px) {
   .wrap { padding-inline: var(--space-3); }
-  .controls { width: 100%; }
+  .label-long { display: none; }
+  .label-short { display: inline; }
   .pinbadge .pin-label { font-size: 12px; stroke-width: 3.5; }
   .pinbadge .badge-text { font-size: 12px; }
   .facts { grid-template-columns: 1fr; }

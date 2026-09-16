@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- The app mark: a leg of the route with a stop badge on it, drawn in the
+       same terracotta, sage and cream the map uses. Source for the PNGs beside
+       it — regenerate with `node tools/build-icons.mjs`. -->
+  <rect width="512" height="512" fill="#f5ead8"/>
+  <g transform="translate(256 256) scale(1.28) translate(-256 -256)"
+     fill="none" stroke-linecap="round" stroke-width="26">
+    <path d="M140 340 L256 250" stroke="#b2622d"/>
+    <path d="M256 250 L372 186" stroke="#728157"/>
+    <circle cx="140" cy="340" r="24" fill="#b2622d" stroke="none"/>
+    <circle cx="372" cy="186" r="24" fill="#82796a" stroke="none"/>
+    <circle cx="256" cy="250" r="56" fill="#b2622d" stroke="#f5ead8" stroke-width="12"/>
+  </g>
+</svg>
