@@ -1,0 +1,167 @@
+/* Route map — page styles.
+   Everything here builds on css/tokens.css; no colour, spacing, radius or
+   shadow is hard-coded. The map's SVG is styled through classes rather than
+   attributes for the same reason, so the palette lives in one place. */
+
+body { font-family: "Heebo", var(--font-body); background: var(--color-bg); }
+h1, h2, h3, h4 { font-family: "Caprasimo", "Heebo", sans-serif; }
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: var(--space-6) var(--space-4) var(--space-8); }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+/* — header — */
+header.top {
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-4);
+  justify-content: space-between; margin-bottom: var(--space-4);
+}
+header.top h1 { font-size: clamp(30px, 4.6vw, 46px); margin: 0; letter-spacing: 0; }
+.sub { font-size: 15px; color: var(--color-neutral-700); font-weight: 500; }
+.controls { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+
+/* — map — */
+#mapbox {
+  background: var(--color-neutral-100); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md); overflow: hidden;
+}
+#mapbox svg { display: block; width: 100%; height: auto; touch-action: pan-y; }
+
+.map-bg { fill: var(--color-neutral-100); }
+.map-land { fill: var(--color-accent-2-200); stroke: var(--color-neutral-400); stroke-width: 0.8; }
+
+.leg { fill: none; stroke-linecap: round; }
+.leg-car { stroke: var(--color-accent-600); stroke-width: 3.6; stroke-opacity: 0.95; }
+.leg-train { stroke: var(--color-accent-2-600); stroke-width: 3.6; stroke-opacity: 0.95; }
+.leg-flight { stroke: var(--color-neutral-600); stroke-width: 2.5; stroke-opacity: 0.8; stroke-dasharray: 7 9; }
+
+/* Each stage kind publishes its colour once, as a custom property the pin, the
+   map badge and the leader line all read. */
+.kind-city { --pin-color: var(--color-accent-600); }
+.kind-stop { --pin-color: var(--color-accent-2-600); }
+.kind-car { --pin-color: var(--color-neutral-900); }
+.kind-flight { --pin-color: var(--color-neutral-600); }
+
+/* The numerals sit on the filled pin. Organic has no pure-white role, and the
+   cream ground tokens are too close to the terracotta and sage fills to stay
+   legible at 13px, so white is named once here rather than inline everywhere. */
+:root { --pin-ink: #fff; }
+
+.pinbadge { cursor: pointer; }
+.pinbadge .hit { fill: transparent; stroke: none; }
+.map-pins .dot { fill: var(--pin-color); }
+.map-pins .leader { stroke: var(--pin-color); stroke-width: 1.2; stroke-opacity: 0.55; }
+/* r is set as an attribute in map.js; this only animates the hover growth,
+   which needs the CSS `r` property and degrades to no animation without it. */
+.pinbadge .badge {
+  fill: var(--pin-color);
+  stroke: var(--color-bg); stroke-width: 2.5;
+  transition: r 0.15s ease;
+}
+.pinbadge .badge-text {
+  fill: var(--pin-ink); font-family: "Heebo", sans-serif; font-weight: 700; font-size: 13px;
+  pointer-events: none;
+}
+.pinbadge .pin-label {
+  fill: var(--color-neutral-900); font-family: "Heebo", sans-serif; font-weight: 700; font-size: 13.5px;
+  paint-order: stroke; stroke: var(--color-neutral-100); stroke-width: 4;
+  pointer-events: none;
+}
+.pinbadge:hover .badge { r: 17; }
+/* The selected stage and keyboard focus both ink the badge outline; focus adds
+   a ring on the (otherwise invisible) touch target so it reads at a glance. */
+.pinbadge.selected .badge { stroke: var(--color-text); stroke-width: 3; }
+.pinbadge:focus { outline: none; }
+.pinbadge:focus-visible .hit { stroke: var(--color-text); stroke-width: 2; stroke-dasharray: 3 3; }
+
+.legend {
+  display: flex; flex-wrap: wrap; gap: var(--space-4);
+  margin: var(--space-3) 0 var(--space-6);
+  font-size: 13px; font-weight: 500; color: var(--color-neutral-700);
+}
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.swatch { width: 26px; height: 0; border-top-width: 4px; border-top-style: solid; border-radius: 999px; }
+.swatch-car { border-top-color: var(--color-accent-600); }
+.swatch-train { border-top-color: var(--color-accent-2-600); }
+.swatch-flight { border-top-color: var(--color-neutral-600); border-top-style: dashed; }
+
+/* — timeline — */
+.pin {
+  width: 28px; height: 28px; border-radius: 999px; display: grid; place-items: center;
+  background: var(--pin-color); color: var(--pin-ink);
+  font: 700 13px/1 "Heebo", sans-serif;
+  box-shadow: var(--shadow-sm); border: 2px solid var(--color-bg);
+}
+.tl { display: grid; gap: var(--space-2); }
+.tl-row { background: var(--color-surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; }
+.tl-row.active { box-shadow: var(--shadow-md); }
+.tl-head {
+  display: grid; grid-template-columns: 34px 92px 1fr auto; gap: var(--space-3);
+  align-items: center; width: 100%; text-align: right;
+  background: none; border: 0; cursor: pointer;
+  padding: var(--space-3) var(--space-4); font: inherit; color: var(--color-text);
+}
+.tl-head:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.tl-head:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -3px; }
+.tl-head .pin { width: 30px; height: 30px; }
+.tl-date { font-size: 13px; font-weight: 700; color: var(--color-accent-700); }
+.tl-title { font-family: "Caprasimo", "Heebo", sans-serif; font-size: 20px; }
+.tl-title small {
+  font-family: "Heebo", sans-serif; font-weight: 500; font-size: 13px;
+  color: var(--color-neutral-700); margin-inline-start: 8px;
+}
+.tl-meta { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.tl-body {
+  display: none;
+  padding: 0 var(--space-4) var(--space-4) calc(34px + 92px + var(--space-3) * 2 + var(--space-4));
+}
+.tl-row.active .tl-body { display: block; }
+
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--space-3); }
+.fact { background: var(--color-neutral-100); border-radius: var(--radius-md); padding: var(--space-3); }
+.fact h5 {
+  margin: 0 0 4px; font-family: "Heebo", sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-neutral-700);
+}
+.fact p { margin: 0; font-size: 14px; font-weight: 500; }
+.fact a { font-weight: 600; color: var(--color-accent-700); }
+.leg-note { font-size: 14px; color: var(--color-neutral-800); margin: 0 0 var(--space-3); }
+
+.en { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+
+/* — contrast —
+   Organic paints ghost buttons and outlined tags in --color-accent, which on
+   the cream ground and the sand surface comes to roughly 2.6–2.9:1. That clears
+   the system's 3:1 target for chrome, but these are both real text at 11–14px,
+   which needs 4.5:1. The system's own rule covers the case: "for paragraph-size
+   text in the accent use a deep ramp step (--color-accent-700) rather than the
+   accent itself". Revert these three declarations to go back to the prototype's
+   lighter terracotta. */
+.btn-ghost { color: var(--color-accent-700); }
+.tag-outline { color: var(--color-accent-700); border-color: var(--color-accent-700); }
+
+/* — phone — */
+@media (max-width: 720px) {
+  /* Two columns: the pin runs down the left, the date and title stack beside
+     it, and the tags take a full row of their own underneath. */
+  .tl-head { grid-template-columns: 30px 1fr; row-gap: 6px; align-items: start; }
+  .tl-head .pin { grid-area: 1 / 1 / 3 / 2; }
+  .tl-date { grid-area: 1 / 2 / 2 / 3; align-self: center; }
+  .tl-title { grid-area: 2 / 2 / 3 / 3; font-size: 18px; }
+  .tl-title small { display: block; margin-inline-start: 0; margin-top: 2px; }
+  .tl-meta { grid-area: 3 / 1 / 4 / -1; justify-content: flex-start; }
+  .tl-body { padding-inline: var(--space-4); }
+}
+@media (max-width: 560px) {
+  .wrap { padding-inline: var(--space-3); }
+  .controls { width: 100%; }
+  .pinbadge .pin-label { font-size: 12px; stroke-width: 3.5; }
+  .pinbadge .badge-text { font-size: 12px; }
+  .facts { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pinbadge .badge { transition: none; }
+}

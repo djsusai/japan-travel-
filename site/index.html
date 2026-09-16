@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מפת מסלול · יפן 26.9–15.10.2026</title>
+<meta name="description" content="מפת מסלול אינטראקטיבית לטיול ביפן, 26 בספטמבר עד 15 באוקטובר 2026 — טיסות, נסיעות, מלונות ופרטי השכרת הרכב.">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <div>
+      <h1>מסלול יפן · 17 יום</h1>
+      <div class="sub">26 בספטמבר – 15 באוקטובר 2026 · תל אביב → אבו דאבי → אוסקה → קיוטו → פוג׳י → האקונה → טוקיו → תל אביב</div>
+    </div>
+    <div class="controls">
+      <div class="controls" role="group" aria-label="תצוגת המפה">
+        <button type="button" class="btn btn-secondary" id="viewJapan" aria-pressed="true">יפן</button>
+        <button type="button" class="btn btn-ghost" id="viewWorld" aria-pressed="false">כל המסלול כולל טיסות</button>
+      </div>
+      <button type="button" class="btn btn-ghost" id="toggleAll" aria-controls="timeline" aria-expanded="false">פתח את כל הפרטים</button>
+    </div>
+  </header>
+
+  <div id="mapbox"></div>
+  <p id="mapStatus" class="sr-only" role="status" aria-live="polite">תצוגת יפן</p>
+
+  <div class="legend">
+    <span><i class="swatch swatch-car"></i> נסיעה ברכב</span>
+    <span><i class="swatch swatch-train"></i> רכבת</span>
+    <span><i class="swatch swatch-flight"></i> טיסה</span>
+    <span>לחיצה על מספר במפה פותחת את היום בציר הזמן</span>
+  </div>
+
+  <div class="tl" id="timeline"></div>
+</main>
+
+<!-- d3-geo (with its d3-array dependency) supplies the Mercator projection and
+     the path generator; countries.js is the pre-converted Natural Earth
+     geometry. All four are local — see tools/vendor-assets.mjs. -->
+<script src="vendor/d3-array.min.js"></script>
+<script src="vendor/d3-geo.min.js"></script>
+<script src="data/countries.js"></script>
+<script src="js/itinerary.js"></script>
+<script src="js/timeline.js"></script>
+<script src="js/map.js"></script>
+</body>
+</html>
