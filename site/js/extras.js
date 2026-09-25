@@ -1,5 +1,5 @@
-/* "שימושי בדרך" — festivals on the trip's dates, rain alternatives by city,
- * and words of Japanese. Rendered from guide.js into collapsible panels, so the
+/* "שימושי בדרך" — festivals on the trip's dates, what to eat by region, rain
+ * alternatives by city, and words of Japanese. Rendered from guide.js into collapsible panels, so the
  * page stays short until one is needed. */
 (function () {
   "use strict";
@@ -11,6 +11,9 @@
   const esc = s =>
     String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
+  /* Latin runs in a Hebrew sentence get their own direction (see plan.js). */
+  const text = window.Plan.text;
+
   const festivals = `
     <details class="extra" id="festivals">
       <summary>פסטיבלים בתאריכים שלכם</summary>
@@ -20,7 +23,7 @@
             f => `<article class="fest">
               <div class="fest-head"><span class="tag tag-accent">${esc(f.dates)}</span><span class="fest-city">${esc(f.city)}</span></div>
               <h4>${esc(f.name)}</h4>
-              ${f.text.map(p => `<p>${esc(p)}</p>`).join("")}
+              ${f.text.map(p => `<p>${text(p)}</p>`).join("")}
               <a href="${esc(f.source)}" target="_blank" rel="noopener">מקור ←</a>
             </article>`
           )
@@ -36,9 +39,29 @@
         ${Object.keys(g.rain)
           .map(
             k => `<div class="rain-city"><h4>${esc(g.rainNames[k])}</h4>
-              <ul>${g.rain[k].map(r => `<li>${esc(r)}</li>`).join("")}</ul></div>`
+              <ul>${g.rain[k].map(r => `<li>${text(r)}</li>`).join("")}</ul></div>`
           )
           .join("")}
+      </div>
+    </details>`;
+
+  const dish = d => `<div class="dish">
+      <h4>${esc(d.name)}${d.ja ? ` <span class="dish-ja" lang="ja">${esc(d.ja)}</span>` : ""}</h4>
+      <p>${text(d.text)}</p>
+      ${d.where ? `<p class="dish-where">איפה: ${text(d.where)}</p>` : ""}
+    </div>`;
+
+  const food = `
+    <details class="extra" id="food">
+      <summary>מה לאכול, לפי אזור</summary>
+      <div class="extra-body">
+        ${Object.keys(g.food)
+          .map(
+            k => `<div class="food-region"><h3>${esc(g.food[k].name)} <small>${esc(g.food[k].tagline)}</small></h3>
+              ${g.food[k].dishes.map(dish).join("")}</div>`
+          )
+          .join("")}
+        <p class="extra-note">${text(g.konbini)}</p>
       </div>
     </details>`;
 
@@ -59,7 +82,7 @@
       </div>
     </details>`;
 
-  mount.innerHTML = festivals + rain + words;
+  mount.innerHTML = festivals + food + rain + words;
 
   /* The per-day "פסטיבל היום" line points here; open the panel when used. */
   window.Extras = {

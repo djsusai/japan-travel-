@@ -198,6 +198,12 @@ header.top h1 { font-size: clamp(30px, 4.6vw, 46px); margin: 0; letter-spacing: 
 .fest-head { display: flex; gap: var(--space-2); align-items: center; margin-bottom: 6px; }
 .fest-city { font-size: 13px; font-weight: 700; color: var(--color-neutral-700); }
 .rain-city ul { margin: 0; padding-inline-start: 20px; }
+.food-region { display: grid; gap: var(--space-2); }
+.food-region h3 { font-size: 20px; margin: var(--space-2) 0 0; }
+.food-region h3 small { font-family: "Heebo", sans-serif; font-size: 13px; font-weight: 500; color: var(--color-neutral-700); margin-inline-start: 6px; }
+.dish { background: var(--color-neutral-100); border-radius: var(--radius-md); padding: var(--space-3); }
+.dish-ja { font-weight: 500; font-size: 14px; color: var(--color-neutral-700); margin-inline-start: 4px; }
+.extra-body .dish-where { font-size: 13px; color: var(--color-neutral-700); margin: 0; }
 .words { margin: 0; display: grid; gap: var(--space-2); }
 .word { background: var(--color-neutral-100); border-radius: var(--radius-md); padding: var(--space-3); }
 .word dt { font-weight: 700; font-size: 17px; }

@@ -17,9 +17,21 @@
   const esc = s =>
     String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   /* Latin runs inside a Hebrew sentence — place names, "onegaishimasu" —
-     get their own direction, so punctuation and quotes stay where they belong. */
-  const text = s =>
-    esc(s).replace(/(&quot;[^&]*?[A-Za-z][^&]*?&quot;|[A-Za-z][A-Za-z0-9'’.\-]*(?: [A-Za-z0-9][A-Za-z0-9'’.\-]*)*)/g, "<bdi>$1</bdi>");
+     get their own direction, so punctuation and quotes stay where they belong.
+     Matched on the raw text, before escaping, so entities are never split. */
+  const LATIN = /"[^"]*[A-Za-z][^"]*"|[A-Za-z][A-Za-z0-9'’.\-]*(?: [A-Za-z0-9][A-Za-z0-9'’.\-]*)*/g;
+  const text = s => {
+    s = String(s);
+    let out = "";
+    let last = 0;
+    for (const m of s.matchAll(LATIN)) {
+      /* A sentence-ending full stop belongs to the Hebrew around it. */
+      const run = m[0].replace(/\.+$/, "");
+      out += esc(s.slice(last, m.index)) + `<bdi>${esc(run)}</bdi>`;
+      last = m.index + run.length;
+    }
+    return out + esc(s.slice(last));
+  };
   const parts = iso => iso.split("-").map(Number);
   const weekday = iso => {
     const [y, m, d] = parts(iso);
@@ -133,9 +145,19 @@
     if (!g) return "";
     const fests = g.festivals.filter(f => f.on.includes(day.date));
     const rain = day.rain && g.rain[day.rain];
+    /* 4.10 is the Fuji night; every other day eats where it rains. */
+    const foodKey = day.date === "2026-10-04" ? "fuji" : day.rain;
+    const food = foodKey && g.food && g.food[foodKey];
     return `${fests
       .map(f => `<button type="button" class="plan-fest"><b>פסטיבל היום · ${esc(f.dates)}:</b> ${text(f.name)} — לפרטים ›</button>`)
       .join("")}${
+      food
+        ? `<details class="plan-rain"><summary>מה לאכול ב${esc(food.name)}</summary><ul>${food.dishes
+            .filter(d => d.name !== "ועוד")
+            .map(d => `<li><b>${esc(d.name)}</b>${d.where ? ` — ${text(d.where)}` : ""}</li>`)
+            .join("")}</ul></details>`
+        : ""
+    }${
       rain
         ? `<details class="plan-rain"><summary>אם יורד גשם ב${esc(g.rainNames[day.rain])}</summary><ul>${rain
             .map(r => `<li>${text(r)}</li>`)
@@ -178,6 +200,6 @@
     if (current) render(current);
   }
 
-  window.Plan = { show, nowNext, setNow, has: iso => days.some(d => d.date === iso), days };
+  window.Plan = { show, nowNext, setNow, has: iso => days.some(d => d.date === iso), days, text };
   render(days[0].date);
 })();
