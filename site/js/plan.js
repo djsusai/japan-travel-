@@ -38,8 +38,8 @@
   /* Each timed item runs until its own end, or else until the next timed item
      starts; the last one runs to the end of the day. */
   function spans(day) {
-    const timed = day.items.map((it, i) => ({ i, start: minutes(it.t), end: minutes(it.e) }))
-      .filter(x => x.start !== null);
+    const timed = day.items.map((it, i) => ({ i, start: minutes(it.t), end: minutes(it.e), alt: it.alt }))
+      .filter(x => x.start !== null && !x.alt);
     return timed.map((x, k) => ({
       i: x.i,
       start: x.start,
@@ -115,7 +115,8 @@
           )
           .join("")}
       </ol>
-      ${day.after ? `<p class="plan-note">${text(day.after)}</p>` : ""}`;
+      ${day.after ? `<p class="plan-note">${text(day.after)}</p>` : ""}
+      ${extras(day)}`;
 
     /* Keep the chosen chip in view inside the scrolling strip. */
     const chip = document.getElementById(`chip-${day.date}`);
@@ -125,6 +126,24 @@
     }
   }
 
+  /* Under each day: any festival running that day, and where to go if it
+     rains in that city. Both come from guide.js. */
+  function extras(day) {
+    const g = window.GUIDE;
+    if (!g) return "";
+    const fests = g.festivals.filter(f => f.on.includes(day.date));
+    const rain = day.rain && g.rain[day.rain];
+    return `${fests
+      .map(f => `<button type="button" class="plan-fest"><b>פסטיבל היום · ${esc(f.dates)}:</b> ${text(f.name)} — לפרטים ›</button>`)
+      .join("")}${
+      rain
+        ? `<details class="plan-rain"><summary>אם יורד גשם ב${esc(g.rainNames[day.rain])}</summary><ul>${rain
+            .map(r => `<li>${text(r)}</li>`)
+            .join("")}</ul></details>`
+        : ""
+    }`;
+  }
+
   function show(iso, opts = {}) {
     render(iso);
     if (opts.scroll) {
@@ -132,6 +151,10 @@
       window.scrollTo({ top, behavior: reduceMotion.matches ? "auto" : "smooth" });
     }
   }
+
+  panel.addEventListener("click", e => {
+    if (e.target.closest(".plan-fest") && window.Extras) window.Extras.openFestivals();
+  });
 
   strip.addEventListener("click", e => {
     const chip = e.target.closest(".plan-chip");
