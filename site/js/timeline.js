@@ -10,6 +10,23 @@
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
+  /* The plan days that fall inside a stage: the nights you are there, or the
+     one date of a stop, pickup or flight. Shown as links into the plan. */
+  const planDays = s =>
+    (window.DAYS || []).filter(d =>
+      s.start === s.end ? d.date === s.start : d.date >= s.start && d.date < s.end
+    );
+  const dayLinks = s => {
+    const ds = planDays(s);
+    if (!ds.length) return "";
+    return `<div class="tl-days"><h5>לו״ז יומי</h5>${ds
+      .map(d => {
+        const [, m, dd] = d.date.split("-").map(Number);
+        return `<button type="button" class="tl-day" data-date="${d.date}"><b>${dd}.${m}</b> ${d.title}</button>`;
+      })
+      .join("")}</div>`;
+  };
+
   list.innerHTML = stages
     .map(
       s => `
@@ -24,6 +41,7 @@
     </button>
     <div class="tl-body" id="${s.id}-body">
       <p class="leg-note">${s.note}</p>
+      ${dayLinks(s)}
       <div class="facts">${s.facts
         .map(([k, v]) => `<div class="fact"><h5>${k}</h5><p>${v}</p></div>`)
         .join("")}</div>
@@ -63,6 +81,11 @@
   }
 
   list.addEventListener("click", e => {
+    const day = e.target.closest(".tl-day");
+    if (day) {
+      window.Plan.show(day.dataset.date, { scroll: true });
+      return;
+    }
     const head = e.target.closest(".tl-head");
     if (head) openStage(head.dataset.id, { toggle: true });
   });

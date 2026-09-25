@@ -60,8 +60,20 @@ const VERSION = ${JSON.stringify(version)};
 const CACHE = \`japan-travel-\${VERSION}\`;
 const PRECACHE = ${JSON.stringify(precache, null, 2)};
 
+/* A new version takes over as soon as it has cached everything it needs, and
+   the page reloads onto it (js/app.js). Each version's files are cached
+   together, so what is on screen is never half old, half new. Offline there is
+   no update check, and the last complete version keeps working. */
 self.addEventListener("install", event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(PRECACHE)));
+  event.waitUntil(
+    caches
+      .open(CACHE)
+      /* cache: "reload" goes past the browser's HTTP cache. GitHub Pages sends
+         max-age=600, so without it a version deployed in the last ten minutes
+         would be precached with the previous version's files — and then kept. */
+      .then(cache => cache.addAll(PRECACHE.map(url => new Request(url, { cache: "reload" }))))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener("activate", event => {
@@ -75,12 +87,6 @@ self.addEventListener("activate", event => {
       )
       .then(() => self.clients.claim())
   );
-});
-
-/* The page asks for this once the user accepts an update. Without it a new
-   version would sit and wait until every tab was closed. */
-self.addEventListener("message", event => {
-  if (event.data === "SKIP_WAITING") self.skipWaiting();
 });
 
 self.addEventListener("fetch", event => {
