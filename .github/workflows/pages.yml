@@ -43,12 +43,10 @@ jobs:
       - name: Disable Jekyll
         run: touch site/.nojekyll
 
-      # enablement turns Pages on for the repo the first time this runs, so
-      # nobody has to set the source by hand. Needs the pages: write permission
-      # above, which the deploy step needs anyway.
+      # Pages has to be switched on once by hand (Settings -> Pages -> Source:
+      # GitHub Actions). configure-pages can't do it itself: the workflow's own
+      # token is refused ("Resource not accessible by integration").
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

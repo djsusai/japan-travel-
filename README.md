@@ -34,9 +34,10 @@ of the trip.
 ## Deploying
 
 Pushing to `main` publishes to GitHub Pages via
-[`.github/workflows/pages.yml`](.github/workflows/pages.yml). The workflow turns
-Pages on for the repository itself the first time it runs, so there is nothing
-to configure by hand.
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml). It needs one
+setting, once — the workflow's token is not allowed to turn Pages on itself:
+
+> **Settings → Pages → Build and deployment → Source: GitHub Actions**
 
 It also regenerates the service worker from the current contents of `site/`, so
 a deploy never ships a stale offline cache.
