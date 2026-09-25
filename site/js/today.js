@@ -96,7 +96,7 @@
     if (also.length) lines.push(`היום גם: ${also.map(s => s.title).join(" · ")}`);
 
     const next = stages[stages.indexOf(stage) + 1];
-    if (next) lines.push(`הבא: ${next.title} · ${shortFormat.format(new Date(toDay(next.start)))}`);
+    if (next) lines.push(`היעד הבא: ${next.title} · ${shortFormat.format(new Date(toDay(next.start)))}`);
 
     return {
       stage,
@@ -108,12 +108,34 @@
     };
   }
 
+  const isoOf = day => new Date(day).toISOString().slice(0, 10);
+
+  /* Minutes since local midnight; ?time=09:30 previews another hour. */
+  function currentMinute() {
+    const m = /^(\d{1,2}):(\d{2})$/.exec(new URLSearchParams(location.search).get("time") || "");
+    if (m) return Number(m[1]) * 60 + Number(m[2]);
+    const now = new Date();
+    return now.getHours() * 60 + now.getMinutes();
+  }
+
   let shownDay = null;
 
-  function paint() {
+  /* full: the date changed (or first load) — also open the stage and pick the
+     day in the plan. Otherwise only the clock moved, so just refresh "now". */
+  function paint(full) {
     const day = currentDay();
-    shownDay = day;
+    const iso = isoOf(day);
     const info = describe(day);
+
+    /* What the plan says for this hour, when the date has a plan. */
+    const plan = info.stage && window.Plan.has(iso) ? window.Plan.nowNext(iso, currentMinute()) : null;
+    if (plan) {
+      const clock = it => (/^\d/.test(it.t) ? `${it.t} ` : "");
+      const live = [];
+      if (plan.now) live.push(`<b>עכשיו:</b> ${plan.now.title}`);
+      if (plan.next) live.push(`<b>אחר כך:</b> ${clock(plan.next)}${plan.next.title}`);
+      info.lines.unshift(...live);
+    }
 
     /* Only a real stage makes the card worth pressing. */
     const tag = info.stage ? "button" : "div";
@@ -125,34 +147,41 @@
         </span>
         <span class="today-title">${info.title}${info.sub ? `<small>${info.sub}</small>` : ""}</span>
         ${info.lines.length ? `<span class="today-lines">${info.lines.map(l => `<span>${l}</span>`).join("")}</span>` : ""}
+        ${info.stage && window.Plan.has(iso) ? '<span class="today-more">ללו״ז המלא של היום ›</span>' : ""}
       </${tag}>`;
 
     const stageId = info.stage ? info.stage.id : null;
-    window.Today = { stageId, day };
+    window.Today = { stageId, day, iso };
+    if (info.stage) card.querySelector(".today-card").addEventListener("click", focus);
+    window.Plan.setNow(iso, plan ? plan.nowIndex : -1);
 
-    if (info.stage) {
-      card.querySelector(".today-card").addEventListener("click", () => focus());
-      jump.hidden = false;
-      window.Timeline.openStage(stageId, {});
-    } else {
-      jump.hidden = true;
-    }
+    if (!full) return;
+    shownDay = day;
+    jump.hidden = !info.stage;
+    if (info.stage) window.Timeline.openStage(stageId, {});
     window.RouteMap.setToday(stageId);
+    if (window.Plan.has(iso)) window.Plan.show(iso);
   }
 
+  /* To today's hour-by-hour plan when there is one (the flight days have
+     none), otherwise to the stage in the list below. */
   function focus() {
-    if (window.Today && window.Today.stageId) {
-      window.Timeline.openStage(window.Today.stageId, { exclusive: true, scroll: true, focus: true });
-    }
+    const t = window.Today;
+    if (!t || !t.stageId) return;
+    if (window.Plan.has(t.iso)) window.Plan.show(t.iso, { scroll: true });
+    else window.Timeline.openStage(t.stageId, { exclusive: true, scroll: true, focus: true });
   }
 
   jump.addEventListener("click", focus);
 
   /* The app can sit on a phone's home screen across midnight; repaint when it
-     comes back to the foreground on a different date. */
+     comes back to the foreground, and keep "now" current while it is open. */
   document.addEventListener("visibilitychange", () => {
-    if (!document.hidden && currentDay() !== shownDay) paint();
+    if (!document.hidden) paint(currentDay() !== shownDay);
   });
+  setInterval(() => {
+    if (!document.hidden) paint(currentDay() !== shownDay);
+  }, 60 * 1000);
 
-  paint();
+  paint(true);
 })();

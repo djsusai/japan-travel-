@@ -117,6 +117,54 @@ header.top h1 { font-size: clamp(30px, 4.6vw, 46px); margin: 0; letter-spacing: 
 .swatch-train { border-top-color: var(--color-accent-2-600); }
 .swatch-flight { border-top-color: var(--color-neutral-600); border-top-style: dashed; }
 
+/* — day-by-day plan — */
+.section-title { font-size: 25px; margin: var(--space-6) 0 var(--space-3); }
+.plan { margin-bottom: var(--space-4); }
+.plan-days {
+  display: flex; gap: var(--space-2); overflow-x: auto; scrollbar-width: thin;
+  padding: 2px 2px var(--space-2); margin-bottom: var(--space-3);
+}
+.plan-chip {
+  flex: none; display: grid; justify-items: center; gap: 1px; min-width: 52px;
+  padding: var(--space-2) var(--space-2); border-radius: var(--radius-md);
+  border: 1px solid var(--color-divider); background: var(--color-neutral-100);
+  font: inherit; color: var(--color-text); cursor: pointer;
+}
+.plan-chip:hover { background: color-mix(in srgb, var(--color-accent) 10%, var(--color-neutral-100)); }
+.plan-chip:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.plan-chip[aria-selected="true"] { background: var(--color-accent-600); border-color: var(--color-accent-600); color: var(--pin-ink); }
+.plan-chip-date { font-weight: 700; font-size: 14px; line-height: 1.2; }
+.plan-chip-day { font-size: 12px; opacity: 0.8; }
+
+.plan-day {
+  background: var(--color-surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+  padding: var(--space-4);
+}
+.plan-kicker { font-size: 13px; font-weight: 700; color: var(--color-accent-700); }
+.plan-title { font-size: 25px; margin: 4px 0; }
+.plan-sub { font-size: 14px; color: var(--color-neutral-700); margin: 0; }
+.plan-note {
+  margin: var(--space-3) 0 0; padding: var(--space-3); border-radius: var(--radius-md);
+  background: var(--color-accent-2-100); color: var(--color-accent-2-900); font-size: 14px;
+}
+.plan-items { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: grid; gap: var(--space-2); }
+.plan-item {
+  display: grid; grid-template-columns: 58px 1fr; gap: var(--space-3);
+  padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-neutral-100);
+}
+.plan-item.is-now { box-shadow: inset 0 0 0 2px var(--color-accent-600); }
+.plan-time {
+  display: grid; align-content: start; gap: 2px;
+  font-weight: 700; font-size: 14px; color: var(--color-accent-700); font-variant-numeric: tabular-nums;
+}
+.plan-time span + span { font-weight: 500; color: var(--color-neutral-700); font-size: 13px; }
+.plan-body h4 { font-family: "Heebo", sans-serif; font-weight: 700; font-size: 16px; margin: 0 0 4px; line-height: 1.3; }
+.plan-body p { font-size: 14px; color: var(--color-neutral-800); margin: 0 0 6px; }
+.plan-body p:last-child { margin-bottom: 0; }
+.plan-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.plan-now { margin-bottom: 4px; }
+.today-more { font-size: 14px; font-weight: 700; color: var(--color-accent-700); }
+
 /* — timeline — */
 .pin {
   width: 28px; height: 28px; border-radius: 999px; display: grid; place-items: center;
@@ -206,6 +254,8 @@ header.top h1 { font-size: clamp(30px, 4.6vw, 46px); margin: 0; letter-spacing: 
   .pinbadge .pin-label { font-size: 12px; stroke-width: 3.5; }
   .pinbadge .badge-text { font-size: 12px; }
   .facts { grid-template-columns: 1fr; }
+  .plan-day { padding: var(--space-3); }
+  .plan-item { grid-template-columns: 48px 1fr; gap: var(--space-2); padding: var(--space-2) var(--space-3); }
 }
 
 @media (prefers-reduced-motion: reduce) {

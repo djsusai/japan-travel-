@@ -54,6 +54,13 @@
     <span>לחיצה על מספר במפה פותחת את היום בציר הזמן</span>
   </div>
 
+  <section class="plan" id="plan" aria-labelledby="planTitle">
+    <h2 class="section-title" id="planTitle">לו״ז יומי</h2>
+    <div class="plan-days" id="planDays" role="tablist" aria-label="בחירת יום"></div>
+    <div class="plan-day" id="planDay" role="tabpanel"></div>
+  </section>
+
+  <h2 class="section-title">טיסות, מלונות ורכב</h2>
   <div class="tl" id="timeline"></div>
 </main>
 
@@ -69,8 +76,10 @@
 <script src="vendor/d3-geo.min.js"></script>
 <script src="data/countries.js"></script>
 <script src="js/itinerary.js"></script>
+<script src="js/days.js"></script>
 <script src="js/timeline.js"></script>
 <script src="js/map.js"></script>
+<script src="js/plan.js"></script>
 <script src="js/today.js"></script>
 <script src="js/app.js"></script>
 </body>
