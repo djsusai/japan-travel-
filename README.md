@@ -12,8 +12,11 @@ plane, or with roaming off in a foreign country, which is the point.
 site/     the app — plain static files, no build step to serve
 tools/    generators: vendored libraries, icons, service worker
 project/  the original Claude Design prototype this was built from
-chats/    the conversation that produced the design
 ```
+
+This repository is public so that GitHub Pages can serve it. Booking references
+and the scanned confirmations are deliberately not in it — at any point in its
+history — and the page asks search engines not to index it.
 
 ## Running it locally
 
@@ -31,13 +34,12 @@ of the trip.
 ## Deploying
 
 Pushing to `main` publishes to GitHub Pages via
-[`.github/workflows/pages.yml`](.github/workflows/pages.yml). It needs one
-setting, once:
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml). The workflow turns
+Pages on for the repository itself the first time it runs, so there is nothing
+to configure by hand.
 
-> **Settings → Pages → Build and deployment → Source: GitHub Actions**
-
-The workflow regenerates the service worker from the current contents of
-`site/`, so a deploy never ships a stale offline cache.
+It also regenerates the service worker from the current contents of `site/`, so
+a deploy never ships a stale offline cache.
 
 ## Editing the trip
 

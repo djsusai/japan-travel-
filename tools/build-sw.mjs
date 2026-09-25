@@ -20,8 +20,10 @@ import { fileURLToPath } from "node:url";
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SITE = join(ROOT, "site");
 
-/* Generated, or documentation that the app never requests. */
-const SKIP = new Set(["sw.js", "README.md", "data/README.md"]);
+/* Generated, or served only to crawlers and tooling. The app never fetches any
+   of these, so caching them would only cost space. The extension rule covers the
+   licence files that ship beside the fonts and the vendored libraries. */
+const SKIP = new Set(["sw.js", ".nojekyll", "robots.txt", "README.md", "data/README.md"]);
 const SKIP_EXT = [".txt", ".md"];
 
 async function walk(dir) {
