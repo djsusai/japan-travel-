@@ -19,7 +19,7 @@
   /* Latin runs inside a Hebrew sentence — place names, "onegaishimasu" —
      get their own direction, so punctuation and quotes stay where they belong.
      Matched on the raw text, before escaping, so entities are never split. */
-  const LATIN = /"[^"]*[A-Za-z][^"]*"|[A-Za-z][A-Za-z0-9'’.\-]*(?: [A-Za-z0-9][A-Za-z0-9'’.\-]*)*/g;
+  const LATIN = /"[^"]*[A-Za-z][^"]*"|(?:[0-9]+ )?[A-Za-z][A-Za-z0-9'’.\-]*(?: [A-Za-z0-9][A-Za-z0-9'’.\-]*)*/g;
   const text = s => {
     s = String(s);
     let out = "";
@@ -159,8 +159,8 @@
       .join("")}${
       food
         ? `<details class="plan-rain"><summary>מה לאכול ב${esc(food.name)}</summary><ul>${food.dishes
-            .filter(d => d.name !== "ועוד")
-            .map(d => `<li><b>${esc(d.name)}</b>${d.where ? ` — ${text(d.where)}` : ""}</li>`)
+            .map(d => `<li><b>${esc(d.name)}</b>${d.where ? ` — ${text(d.where)}` : ""}${
+              d.map ? `<div class="plan-maps">${d.map.map(pin).join("")}</div>` : ""}</li>`)
             .join("")}</ul></details>`
         : ""
     }${
@@ -206,6 +206,6 @@
     if (current) render(current);
   }
 
-  window.Plan = { show, nowNext, setNow, has: iso => days.some(d => d.date === iso), days, text };
+  window.Plan = { show, nowNext, setNow, has: iso => days.some(d => d.date === iso), days, text, pin };
   render(days[0].date);
 })();

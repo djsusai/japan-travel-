@@ -49,6 +49,7 @@
       <h4>${esc(d.name)}${d.ja ? ` <span class="dish-ja" lang="ja">${esc(d.ja)}</span>` : ""}</h4>
       <p>${text(d.text)}</p>
       ${d.where ? `<p class="dish-where">איפה: ${text(d.where)}</p>` : ""}
+      ${d.map ? `<div class="plan-maps">${d.map.map(window.Plan.pin).join("")}</div>` : ""}
     </div>`;
 
   const food = `
