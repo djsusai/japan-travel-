@@ -49,6 +49,11 @@
 
   /* Each timed item runs until its own end, or else until the next timed item
      starts; the last one runs to the end of the day. */
+  /* A Google Maps search for one place. On a phone it opens the Maps app. */
+  const pin = ([label, query]) =>
+    `<a class="plan-map" href="https://www.google.com/maps/search/?api=1&amp;query=${encodeURIComponent(query)}"
+        target="_blank" rel="noopener"><span aria-hidden="true">📍</span> ${text(label)}</a>`;
+
   function spans(day) {
     const timed = day.items.map((it, i) => ({ i, start: minutes(it.t), end: minutes(it.e), alt: it.alt }))
       .filter(x => x.start !== null && !x.alt);
@@ -122,6 +127,7 @@
               <h4>${text(it.title)}</h4>
               ${it.tags && it.tags.length ? `<div class="plan-tags">${it.tags.map(t => `<span class="tag tag-accent-2">${esc(t)}</span>`).join("")}</div>` : ""}
               ${it.text.map(p => `<p>${text(p)}</p>`).join("")}
+              ${it.map ? `<div class="plan-maps">${it.map.map(pin).join("")}</div>` : ""}
             </div>
           </li>`
           )
