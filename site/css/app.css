@@ -198,7 +198,7 @@ header.top h1 { font-size: clamp(30px, 4.6vw, 46px); margin: 0; letter-spacing: 
 .extra summary:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
 .extra summary:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -3px; }
 .extra-body { padding: 0 var(--space-4) var(--space-4); display: grid; gap: var(--space-3); }
-.extra-body h4 { font-family: "Heebo", sans-serif; font-weight: 700; font-size: 16px; margin: 0 0 4px; }
+.extra-body h4, .fest h3, .rain-city h3 { font-family: "Heebo", sans-serif; font-weight: 700; font-size: 16px; margin: 0 0 4px; }
 .extra-body p, .extra-body li { font-size: 14px; color: var(--color-neutral-800); }
 .extra-body p { margin: 0 0 6px; }
 .extra-body a { font-size: 14px; font-weight: 600; color: var(--color-accent-700); }
@@ -269,7 +269,8 @@ header.top h1 { font-size: clamp(30px, 4.6vw, 46px); margin: 0; letter-spacing: 
 .tl-day:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--space-3); }
 .fact { background: var(--color-neutral-100); border-radius: var(--radius-md); padding: var(--space-3); }
-.fact h5 {
+/* A label, not a heading — under the section's h2 an h5 would skip levels. */
+.fact-k {
   margin: 0 0 4px; font-family: "Heebo", sans-serif; font-size: 11px; font-weight: 700;
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-neutral-700);
 }

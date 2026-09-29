@@ -43,7 +43,7 @@
       <p class="leg-note">${s.note}</p>
       ${dayLinks(s)}
       <div class="facts">${s.facts
-        .map(([k, v]) => `<div class="fact"><h5>${k}</h5><p>${v}</p></div>`)
+        .map(([k, v]) => `<div class="fact"><div class="fact-k">${k}</div><p>${v}</p></div>`)
         .join("")}</div>
     </div>
   </article>`

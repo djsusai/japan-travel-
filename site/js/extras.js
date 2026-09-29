@@ -22,7 +22,7 @@
           .map(
             f => `<article class="fest">
               <div class="fest-head"><span class="tag tag-accent">${esc(f.dates)}</span><span class="fest-city">${esc(f.city)}</span></div>
-              <h4>${esc(f.name)}</h4>
+              <h3>${esc(f.name)}</h3>
               ${f.text.map(p => `<p>${text(p)}</p>`).join("")}
               <a href="${esc(f.source)}" target="_blank" rel="noopener">מקור ←</a>
             </article>`
@@ -38,7 +38,7 @@
       <div class="extra-body">
         ${Object.keys(g.rain)
           .map(
-            k => `<div class="rain-city"><h4>${esc(g.rainNames[k])}</h4>
+            k => `<div class="rain-city"><h3>${esc(g.rainNames[k])}</h3>
               <ul>${g.rain[k].map(r => `<li>${text(r)}</li>`).join("")}</ul></div>`
           )
           .join("")}
