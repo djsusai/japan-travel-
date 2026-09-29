@@ -19,7 +19,7 @@
   const dayLinks = s => {
     const ds = planDays(s);
     if (!ds.length) return "";
-    return `<div class="tl-days"><h5>לו״ז יומי</h5>${ds
+    return `<div class="tl-days"><div class="tl-days-label">לו״ז יומי</div>${ds
       .map(d => {
         const [, m, dd] = d.date.split("-").map(Number);
         return `<button type="button" class="tl-day" data-date="${d.date}"><b>${dd}.${m}</b> ${d.title}</button>`;

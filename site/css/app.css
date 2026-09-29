@@ -253,7 +253,9 @@ header.top h1 { font-size: clamp(30px, 4.6vw, 46px); margin: 0; letter-spacing: 
 .tl-row.active .tl-body { display: block; }
 
 .tl-days { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; margin: 0 0 var(--space-3); }
-.tl-days h5 {
+/* Not a heading: the rows' own titles are buttons, so a heading here would
+   skip levels under the section's h2. */
+.tl-days-label {
   width: 100%; margin: 0; font-family: "Heebo", sans-serif; font-size: 11px; font-weight: 700;
   letter-spacing: 0.08em; color: var(--color-neutral-700);
 }
